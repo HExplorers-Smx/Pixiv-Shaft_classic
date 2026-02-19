@@ -63,6 +63,7 @@
     <color name="white_to_1414">#141414</color>
     <color name="user_name_horizontal">#A9A9A9</color>
     <color name="white_to_black">#000000</color>
+    <color name="hint_text">#80FFFFFF</color>
     <color name="fragment_center">#2A2A2A</color>
     <color name="fragment_illust_divider">#e3e3e3</color>
     <color name="button_stroke">#434343</color>
@@ -82,5 +83,11 @@
 
     <color name="page_default_background">#0A001A</color>
 
-    <color name="view_pager_shoulder">#4D000000</color>
+    <color name="view_pager_shoulder">#000000</color>
+
+    <!-- Day: black (values), Night: white -->
+    <color name="black_to_white">#FFFFFF</color>
+
+    <!-- Search bar background (night). Solid to avoid "ghosting". -->
+    <color name="search_primary_10">#000000</color>
 </resources>

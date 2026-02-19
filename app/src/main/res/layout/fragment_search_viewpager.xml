@@ -85,8 +85,8 @@
                                 android:inputType="text"
                                 android:singleLine="true"
                                 android:text="@={viewModel.inputDraft}"
-                                android:textColor="@android:color/white"
-                                android:textColorHint="@color/dark_text_color"
+                                android:textColor="@color/black_to_grey"
+                                android:textColorHint="@color/hint_text"
                                 android:textSize="13sp" />
 
 

@@ -1,17 +1,11 @@
 package ceui.lisa.activities;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.URLUtil;
-import android.widget.TextView;
+import android.view.ViewGroup;
 
 import com.mxn.soul.flowingdrawer_core.ElasticDrawer;
 import com.qmuiteam.qmui.skin.QMUISkinManager;
@@ -35,14 +29,10 @@ import ceui.lisa.fragments.FragmentFilter;
 import ceui.lisa.fragments.FragmentSearchIllust;
 import ceui.lisa.fragments.FragmentSearchNovel;
 import ceui.lisa.fragments.FragmentSearchUser;
-import ceui.lisa.interfaces.Callback;
 import ceui.lisa.utils.Common;
+import ceui.lisa.utils.DensityUtil;
 import ceui.lisa.utils.Params;
-import ceui.lisa.utils.PixivOperate;
-import ceui.lisa.utils.SearchTypeUtil;
 import ceui.lisa.viewmodel.SearchModel;
-
-import static ceui.lisa.activities.Shaft.sUserModel;
 
 public class SearchActivity extends BaseActivity<FragmentNewSearchBinding> {
 
@@ -85,7 +75,16 @@ public class SearchActivity extends BaseActivity<FragmentNewSearchBinding> {
                 getString(R.string.string_138),
                 getString(R.string.string_432)
         };
-        baseBind.searchBox.setText(keyWord);
+        // AppBar 已移动到底部，这里 head 用作“底部系统导航栏/手势条”占位，默认 0
+        try {
+            ViewGroup.LayoutParams headParams = baseBind.head.getLayoutParams();
+            headParams.height = 0;
+            baseBind.head.setLayoutParams(headParams);
+        } catch (Exception ignore) { }
+
+        // 结果页只展示结果：不再混入“搜索历史/热门标签/底部搜索框”等搜索首页内容
+        baseBind.toolbar.setTitle(keyWord);
+
         baseBind.viewPager.setAdapter(new FragmentPagerAdapter(getSupportFragmentManager(), 0) {
             @NonNull
             @Override
@@ -123,14 +122,12 @@ public class SearchActivity extends BaseActivity<FragmentNewSearchBinding> {
                 // 通知更改 过滤器-关键字匹配 类型
                 if (fragmentFilter != null) {
                     mPosition = position;
-                    if (mPosition == 2) {
-                        baseBind.drawerlayout.setTouchMode(ElasticDrawer.TOUCH_MODE_NONE);
-                        if (baseBind.drawerlayout.isMenuVisible()) {
-                            baseBind.drawerlayout.closeMenu(true);
-                        }
-                    }
-                    if (mPosition != 2) {
-                        baseBind.drawerlayout.setTouchMode(ElasticDrawer.TOUCH_MODE_BEZEL);
+                    // 搜索结果页：允许左右滑动在【插画/小说/作者】之间切换。
+                    // 为了不干扰“右滑切换上一项”的手势，这里禁用侧栏的手势滑出。
+                    // 侧栏仍然可以通过右上角的筛选按钮打开。
+                    baseBind.drawerlayout.setTouchMode(ElasticDrawer.TOUCH_MODE_NONE);
+                    if (baseBind.drawerlayout.isMenuVisible()) {
+                        baseBind.drawerlayout.closeMenu(true);
                     }
 
                     MutableLiveData<Boolean> isNovel = searchModel.getIsNovel();
@@ -150,7 +147,8 @@ public class SearchActivity extends BaseActivity<FragmentNewSearchBinding> {
         });
         baseBind.viewPager.setOffscreenPageLimit(2);
         baseBind.tabLayout.setupWithViewPager(baseBind.viewPager);
-        baseBind.drawerlayout.setTouchMode(ElasticDrawer.TOUCH_MODE_BEZEL);
+        // 搜索结果页禁用“手势滑出侧栏”，避免和 ViewPager 左右切页冲突。
+        baseBind.drawerlayout.setTouchMode(ElasticDrawer.TOUCH_MODE_NONE);
         if (index != 0) {
             baseBind.viewPager.setCurrentItem(index);
         }
@@ -163,12 +161,9 @@ public class SearchActivity extends BaseActivity<FragmentNewSearchBinding> {
 
     @Override
     protected void initData() {
-        baseBind.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mActivity.finish();
-            }
-        });
+        // 搜索结果页的 AppBar 已整体移动到底部，返回箭头会占位置且容易误触。
+        // 这里直接移除导航图标与点击监听；返回使用系统手势/返回键即可。
+        baseBind.toolbar.setNavigationIcon(null);
         baseBind.toolbar.inflateMenu(R.menu.illust_filter);
         baseBind.toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
@@ -189,77 +184,8 @@ public class SearchActivity extends BaseActivity<FragmentNewSearchBinding> {
                 return false;
             }
         });
-        baseBind.searchBox.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                searchModel.getKeyword().setValue(baseBind.searchBox.getText().toString());
-            }
-        });
-        baseBind.searchBox.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                String trimmedKeyword = baseBind.searchBox.getText().toString().trim();
-                if (TextUtils.isEmpty(trimmedKeyword) && TextUtils.isEmpty(searchModel.getStarSize().getValue())) {
-                    Common.showToast(getString(R.string.string_139));
-                    return false;
-                }
-
-                if (URLUtil.isValidUrl(trimmedKeyword)) {
-                    try {
-                        PixivOperate.insertSearchHistory(trimmedKeyword, SearchTypeUtil.SEARCH_TYPE_DB_URL);
-                        Intent intent = new Intent(mContext, OutWakeActivity.class);
-                        intent.setData(Uri.parse(trimmedKeyword));
-                        startActivity(intent);
-                        mActivity.finish();
-                    } catch (Exception e) {
-                        Common.showToast(e.toString());
-                        e.printStackTrace();
-                    }
-                }
-                else if(Common.isNumeric(trimmedKeyword)){
-                    QMUITipDialog tipDialog = new QMUITipDialog.Builder(mContext)
-                            .setIconType(QMUITipDialog.Builder.ICON_TYPE_LOADING)
-                            .setTipWord(getString(R.string.string_429))
-                            .create();
-                    tipDialog.show();
-                    //先假定为作品id
-                    PixivOperate.getIllustByID(sUserModel, tryParseId(trimmedKeyword), mContext, new Callback<Void>() {
-                        @Override
-                        public void doSomething(Void t) {
-                            PixivOperate.insertSearchHistory(trimmedKeyword, SearchTypeUtil.SEARCH_TYPE_DB_ILLUSTSID);
-                            tipDialog.dismiss();
-                            mActivity.finish();
-                        }
-                    }, new Callback<Void>() {
-                        @Override
-                        public void doSomething(Void t) {
-                            tipDialog.dismiss();
-                            PixivOperate.insertSearchHistory(trimmedKeyword, SearchTypeUtil.SEARCH_TYPE_DB_USERID);
-                            Intent intent = new Intent(mContext, UserActivity.class);
-                            intent.putExtra(Params.USER_ID, Integer.valueOf(trimmedKeyword));
-                            startActivity(intent);
-                            mActivity.finish();
-                        }
-                    });
-                }
-                else{
-                    searchModel.getNowGo().setValue("search_now");
-                    Common.hideKeyboard(mActivity);
-                }
-
-                return true;
-            }
-        });
+        // 结果页不再放“输入框/搜索历史/热门标签”，搜索入口保留在搜索首页（FragmentSearch）
 
         fragmentFilter = new FragmentFilter();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -273,6 +199,7 @@ public class SearchActivity extends BaseActivity<FragmentNewSearchBinding> {
                     .commitNowAllowingStateLoss();
         }
     }
+
 
     private void tipDialog(Context context){
         QMUIDialog qmuiDialog = new QMUIDialog.MessageDialogBuilder(context)

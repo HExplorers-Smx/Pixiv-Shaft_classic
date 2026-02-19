@@ -180,6 +180,7 @@
         <activity
             android:name=".activities.SearchActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/SplashTheme" />
         <activity android:name=".activities.VActivity" />
         <activity

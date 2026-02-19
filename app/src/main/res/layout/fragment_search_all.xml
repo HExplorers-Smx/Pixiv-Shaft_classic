@@ -36,7 +36,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_marginTop="20dp"
-                    android:background="@drawable/round_corner_white08_r8"
+                    android:background="@drawable/round_corner_theme_r8"
                     android:layout_marginHorizontal="20dp"
                     android:layout_height="46dp">
 
@@ -45,6 +45,9 @@
                         app:layout_constraintStart_toStartOf="parent"
                         android:paddingStart="6dp"
                         android:background="@null"
+                       
+                        android:textColor="@color/black_to_grey"
+                        android:textColorHint="@color/hint_text"
                         android:textSize="15sp"
                         android:hint="@string/search_by_id_or_word"
                         android:text="@={viewModel.inputDraft}"

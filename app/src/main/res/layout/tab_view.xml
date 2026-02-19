@@ -6,9 +6,6 @@
 
     <TextView
         android:id="@+id/tab_text"
-        android:shadowRadius="16"
-        android:shadowColor="#0088A8"
-        android:shadowDy="1"
         android:paddingVertical="5dp"
         android:paddingHorizontal="10dp"
         android:layout_width="wrap_content"

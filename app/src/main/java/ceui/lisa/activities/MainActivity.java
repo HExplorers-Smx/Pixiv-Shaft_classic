@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.view.ViewCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -42,11 +43,12 @@ import ceui.lisa.databinding.ActivityCoverBinding;
 import ceui.lisa.fragments.FragmentCenter;
 import ceui.lisa.fragments.FragmentLeft;
 import ceui.lisa.fragments.FragmentRight;
+import ceui.lisa.fragments.FragmentSearch;
 import ceui.lisa.fragments.FragmentViewPager;
-import ceui.lisa.helper.DrawerLayoutHelper;
 import ceui.lisa.helper.NavigationLocationHelper;
 import ceui.lisa.utils.Common;
 import ceui.lisa.utils.Dev;
+import ceui.lisa.utils.DensityUtil;
 import ceui.lisa.utils.GlideUtil;
 import ceui.lisa.utils.Params;
 import ceui.lisa.utils.ReverseImage;
@@ -66,6 +68,11 @@ public class MainActivity extends BaseActivity<ActivityCoverBinding>
     private TextView user_email;
     private long mExitTime;
     private Fragment[] baseFragments = null;
+
+    // 仿 QQ：在主页面任意位置右滑（>50dp）拉出左侧 Drawer（保留左上角按钮）
+    private float drawerDownX = 0f;
+    private float drawerDownY = 0f;
+    private boolean drawerDragging = false;
 
     @Override
     protected int initLayout() {
@@ -110,11 +117,17 @@ public class MainActivity extends BaseActivity<ActivityCoverBinding>
                 } else if (item.getItemId() == R.id.action_2) {
                     baseBind.viewPager.setCurrentItem(1);
                     return true;
-                } else if (item.getItemId() == R.id.action_3) {
+                } else if (item.getItemId() == R.id.action_search) {
+                    // 底部「搜索」是一个独立的 Tab 页（搜索首页：历史/发现/输入）。
+                    // 右上角原本的搜索按钮/入口仍然保留为旧搜索方式，不冲突。
                     baseBind.viewPager.setCurrentItem(2);
                     return true;
-                } else if (item.getItemId() == R.id.action_4) {
+                } else if (item.getItemId() == R.id.action_3) {
                     baseBind.viewPager.setCurrentItem(3);
+                    return true;
+                } else if (item.getItemId() == R.id.action_4) {
+                    // 仅在开启 R18 主视图时存在（第 5 个页）。
+                    baseBind.viewPager.setCurrentItem(4);
                     return true;
                 }
                 return false;
@@ -135,6 +148,8 @@ public class MainActivity extends BaseActivity<ActivityCoverBinding>
                             ((FragmentCenter) baseFragment).forceRefresh();
                         }
                     }
+                } else if (item.getItemId() == R.id.action_search) {
+                    // 搜索首页一般不需要强制刷新，这里保持空实现，避免误触导致闪动。
                 } else if (item.getItemId() == R.id.action_3) {
                     for (Fragment baseFragment : baseFragments) {
                         if (baseFragment instanceof FragmentRight) {
@@ -163,8 +178,10 @@ public class MainActivity extends BaseActivity<ActivityCoverBinding>
                 } else if (position == 1) {
                     baseBind.navigationView.setSelectedItemId(R.id.action_2);
                 } else if (position == 2) {
-                    baseBind.navigationView.setSelectedItemId(R.id.action_3);
+                    baseBind.navigationView.setSelectedItemId(R.id.action_search);
                 } else if (position == 3) {
+                    baseBind.navigationView.setSelectedItemId(R.id.action_3);
+                } else if (position == 4) {
                     baseBind.navigationView.setSelectedItemId(R.id.action_4);
                 }
             }
@@ -175,13 +192,119 @@ public class MainActivity extends BaseActivity<ActivityCoverBinding>
             }
         });
 
-        baseBind.viewPager.setTouchEventForwarder(new DrawerLayoutViewPager.IForwardTouchEvent() {
-            @Override
-            public void forwardTouchEvent(MotionEvent ev) {
-                getDrawer().onTouchEvent(ev);
+        // Drawer 的“全屏右滑打开 + 50dp 阈值”统一在 dispatchTouchEvent() 中实现。
+        // 这里不再把 ViewPager 的触摸事件强行转发给 Drawer，否则会影响发现页内部的左右滑动
+        // （例如：推荐作品 / 热门标签）。
+    }
+
+    
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        // 仿 QQ：仅在“发现页-推荐作品(最左Tab)”允许全屏右滑拉出左侧 Drawer
+        // 其他页面保持原行为（仅左边缘滑动或点左上角按钮打开）
+        try {
+            if (baseBind != null && getDrawer() != null) {
+                final DrawerLayout drawer = getDrawer();
+
+                // 仅在左侧 Drawer 关闭时启用（打开时由 Drawer 自己处理关闭/拖动）
+                if (!drawer.isDrawerOpen(GravityCompat.START)) {
+                    final int action = ev.getActionMasked();
+
+                    if (action == MotionEvent.ACTION_DOWN) {
+                        drawerDownX = ev.getX();
+                        drawerDownY = ev.getY();
+                        drawerDragging = false;
+                    } else if (action == MotionEvent.ACTION_MOVE) {
+                        // ⭐限制：只在“发现页-推荐作品”处理全屏右滑开抽屉
+                        if (!isOnDiscoverRecommendWorksTab()) {
+                            return super.dispatchTouchEvent(ev);
+                        }
+
+                        final float dx = ev.getX() - drawerDownX;
+                        final float dy = ev.getY() - drawerDownY;
+
+                        // 阈值：25dp（更灵敏，且推荐作品为最左页，右滑无其它内容）
+                        final float threshold = DensityUtil.dp2px(25);
+
+                        // 只识别“明显向右”的横向拖动：dx > 阈值 且横向明显大于纵向抖动
+                        if (dx > threshold && dx > Math.abs(dy) * 1.2f) {
+                            drawer.openDrawer(GravityCompat.START);
+                            return true;
+                        }
+                    } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) {
+                        drawerDragging = false;
+                    }
+                } else {
+                    drawerDragging = false;
+                }
             }
-        });
-        DrawerLayoutHelper.setCustomLeftEdgeSize(getDrawer(), 1.0f);
+        } catch (Throwable ignore) {
+            // fall through
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    /**
+     * 判断触点下是否存在“可水平滚动”的子控件。
+     * 用于避免 Drawer 全屏右滑打开手势抢走内部 ViewPager/RecyclerView 的左右滑动。
+     */
+    private boolean canChildScrollHorizontally(MotionEvent ev, int direction) {
+        try {
+            final View root = getWindow().getDecorView();
+            if (root == null) return false;
+            final float rawX = ev.getRawX();
+            final float rawY = ev.getRawY();
+            return findScrollableChild(root, rawX, rawY, direction);
+        } catch (Throwable ignore) {
+            return false;
+        }
+    }
+
+    private boolean findScrollableChild(View view, float rawX, float rawY, int direction) {
+        if (view == null || view.getVisibility() != View.VISIBLE) return false;
+
+        int[] loc = new int[2];
+        view.getLocationOnScreen(loc);
+        float left = loc[0];
+        float top = loc[1];
+        float right = left + view.getWidth();
+        float bottom = top + view.getHeight();
+
+        if (rawX < left || rawX > right || rawY < top || rawY > bottom) {
+            return false;
+        }
+
+        // 深度优先：先看更上层/更具体的子控件
+        if (view instanceof android.view.ViewGroup) {
+            android.view.ViewGroup vg = (android.view.ViewGroup) view;
+            for (int i = vg.getChildCount() - 1; i >= 0; i--) {
+                View child = vg.getChildAt(i);
+                if (findScrollableChild(child, rawX, rawY, direction)) {
+                    return true;
+                }
+            }
+        }
+
+        return ViewCompat.canScrollHorizontally(view, direction);
+    }
+
+    /**
+     * @return true if we are currently on the main "发现" page (FragmentLeft)
+     * and its internal tab is on the first page ("推荐作品").
+     */
+    private boolean isOnDiscoverRecommendWorksTab() {
+        try {
+            if (baseBind == null || baseFragments == null || baseFragments.length == 0) return false;
+            // Main ViewPager: position 0 == FragmentLeft
+            if (baseBind.viewPager == null || baseBind.viewPager.getCurrentItem() != 0) return false;
+            Fragment f = baseFragments[0];
+            if (f instanceof FragmentLeft) {
+                return ((FragmentLeft) f).isOnRecommendWorksTab();
+            }
+            return false;
+        } catch (Throwable ignore) {
+            return false;
+        }
     }
 
     private void initFragment() {
@@ -190,6 +313,7 @@ public class MainActivity extends BaseActivity<ActivityCoverBinding>
             baseFragments = new Fragment[]{
                     new FragmentLeft(),
                     new FragmentCenter(),
+                    new FragmentSearch(),
                     new FragmentRight(),
                     FragmentViewPager.newInstance(Params.VIEW_PAGER_R18),
             };
@@ -198,6 +322,7 @@ public class MainActivity extends BaseActivity<ActivityCoverBinding>
             baseFragments = new Fragment[]{
                     new FragmentLeft(),
                     new FragmentCenter(),
+                    new FragmentSearch(),
                     new FragmentRight()
             };
         }

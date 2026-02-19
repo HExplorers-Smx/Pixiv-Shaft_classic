@@ -7,8 +7,10 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import ceui.lisa.R;
 import ceui.lisa.activities.MainActivity;
@@ -88,6 +90,10 @@ public class FragmentLeft extends BaseLazyFragment<FragmentLeftBinding> {
         baseBind.tabLayout.setupWithViewPager(baseBind.viewPager);
         MyOnTabSelectedListener listener = new MyOnTabSelectedListener(mFragments);
         baseBind.tabLayout.addOnTabSelectedListener(listener);
+
+        // Fix: On the second tab (Hot Tag), swiping back to the first tab can be hijacked by
+        // DrawerLayout's left-edge gesture on some devices (gesture navigation / larger edge size).
+        // Lock the drawer when we are not on the first page so ViewPager can receive the gesture.
     }
 
     public void forceRefresh() {
@@ -95,6 +101,20 @@ public class FragmentLeft extends BaseLazyFragment<FragmentLeftBinding> {
             mFragments[baseBind.viewPager.getCurrentItem()].forceRefresh();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * @return true if the internal tab ViewPager is currently on the first tab ("推荐作品").
+     * Used by MainActivity to decide whether a right-swipe should open the left drawer.
+     */
+    public boolean isOnRecommendWorksTab() {
+        try {
+            return baseBind != null
+                    && baseBind.viewPager != null
+                    && baseBind.viewPager.getCurrentItem() == 0;
+        } catch (Throwable ignore) {
+            return false;
         }
     }
 }

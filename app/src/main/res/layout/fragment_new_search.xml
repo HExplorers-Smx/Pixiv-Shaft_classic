@@ -6,89 +6,68 @@
 
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
+    <!--
+      搜索结果页（SearchActivity）只展示结果 + 过滤侧栏。
+      搜索首页（搜索历史/热门标签/搜索输入）在 FragmentSearch。
+      这样避免把“搜索页”和“搜索结果页”混在一个界面里。
+    -->
+    <RelativeLayout
         android:id="@+id/top_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/app_bar"
-            android:background="?attr/colorPrimary">
+            android:layout_alignParentBottom="true"
+            android:background="@color/search_primary_10">
+
+            <!-- 底部占位：用于适配系统导航栏/手势条（高度在代码里可调整） -->
+            <View
+                android:id="@+id/head"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" />
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                app:layout_scrollFlags="scroll|enterAlways"
                 android:layout_height="wrap_content"
-                app:contentInsetStartWithNavigation="0dp"
-                android:background="?attr/colorPrimary"
+                android:background="@color/search_primary_10"
                 android:elevation="0dp"
-                android:fitsSystemWindows="true"
-                android:theme="@style/AppTheme.AppBarOverlay"
+                android:theme="@style/AppTheme.SearchToolbarOverlay"
+                app:contentInsetStartWithNavigation="0dp"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:navigationIcon="@drawable/ic_arrow_back_white_shadow"
                 app:title=" "
-                app:titleTextColor="@android:color/white">
-
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:id="@+id/search_box"
-                    android:imeOptions="actionSearch"
-                    android:singleLine="true"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:textSize="15sp"
-                    android:textColor="@color/rank_text_color"
-                    android:background="@drawable/stroke"
-                    android:paddingStart="@dimen/eight_dp"
-                    android:paddingEnd="@dimen/sixteen_dp"
-                    android:paddingTop="@dimen/eight_dp"
-                    android:paddingBottom="@dimen/eight_dp"
-                    android:layout_height="wrap_content"
-                    android:inputType="text">
-
-
-                </EditText>
-
-            </androidx.appcompat.widget.Toolbar>
+                app:titleTextColor="@color/black_to_white" />
 
             <com.google.android.material.tabs.TabLayout
-                android:layout_width="match_parent"
                 android:id="@+id/tab_layout"
-                app:tabMode="fixed"
-                app:tabTextColor="@color/light_new_primary_color"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                app:tabIndicatorColor="@color/black_to_white"
                 app:tabIndicatorFullWidth="false"
-                app:tabIndicatorColor="@android:color/white"
-                app:tabSelectedTextColor="@android:color/white"
-                android:layout_height="35dp">
-
-            </com.google.android.material.tabs.TabLayout>
+                app:tabMode="fixed"
+                app:tabSelectedTextColor="@color/black_to_white"
+                app:tabTextColor="@color/text20" />
 
         </com.google.android.material.appbar.AppBarLayout>
-
 
         <com.mxn.soul.flowingdrawer_core.FlowingDrawer
             android:id="@+id/drawerlayout"
             android:layout_width="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_height="match_parent"
+            android:layout_above="@id/app_bar"
             android:clipChildren="false"
-            android:layout_below="@+id/app_bar"
             android:clipToPadding="false"
-            app:edPosition="2"
+            app:edMenuBackground="@color/fragment_center"
             app:edMenuSize="280dp"
-            app:edMenuBackground="@color/fragment_center">
+            app:edPosition="2">
 
             <androidx.viewpager.widget.ViewPager
-                android:layout_width="match_parent"
                 android:id="@+id/view_pager"
-                android:layout_height="match_parent">
-
-            </androidx.viewpager.widget.ViewPager>
-
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
             <com.mxn.soul.flowingdrawer_core.FlowingMenuLayout
                 android:id="@+id/menulayout"
@@ -104,8 +83,5 @@
 
         </com.mxn.soul.flowingdrawer_core.FlowingDrawer>
 
-
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </RelativeLayout>
 </layout>
-

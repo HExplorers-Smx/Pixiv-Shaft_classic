@@ -21,10 +21,14 @@ android {
 
     compileOptions {
         coreLibraryDesugaringEnabled = true
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
-    namespace 'ceui.lisa.models'
+    
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+namespace 'ceui.lisa.models'
 }
 
 dependencies {

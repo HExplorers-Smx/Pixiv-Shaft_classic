@@ -194,12 +194,19 @@
     <color name="tag_placeholder_bg">#0DFFFFFF</color>
     <color name="tag_placeholder_border">#66FFFFFF</color>
     <color name="dark_text_color">#99FFFFFF</color>
+    <color name="hint_text">#80000000</color>
 
 
     <color name="splash_background">#10B7F5</color>
     <color name="page_default_background">#0A001A</color>
 
-    <color name="view_pager_shoulder">#59FFFFFF</color>
+    <!-- Search / ViewPager shoulder background (day). Slightly off-white to avoid harsh contrast. -->
+    <color name="view_pager_shoulder">#F2F2F2</color>
 
+    <!-- Day: black, Night: white (see values-night). Used for search tabs / buttons / icons. -->
+    <color name="black_to_white">#000000</color>
+
+    <!-- Search bar background (day). Solid (no transparency) to avoid "ghosting"/"double" look. -->
+    <color name="search_primary_10">#F2F2F2</color>
 </resources>
 
