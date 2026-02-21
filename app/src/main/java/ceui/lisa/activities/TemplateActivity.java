@@ -28,6 +28,7 @@ import ceui.lisa.fragments.FragmentEditAccount;
 import ceui.lisa.fragments.FragmentEditFile;
 import ceui.lisa.fragments.FragmentFeature;
 import ceui.lisa.fragments.FragmentFileName;
+import ceui.lisa.fragments.FragmentNovelFileName;
 import ceui.lisa.fragments.FragmentFollowUser;
 import ceui.lisa.fragments.FragmentHistory;
 import ceui.lisa.fragments.FragmentImageDetail;
@@ -211,6 +212,8 @@ public class TemplateActivity extends BaseActivity<ActivityFragmentBinding> impl
                     return FragmentViewPager.newInstance(Params.VIEW_PAGER_MUTED);
                 case "修改命名方式":
                     return FragmentFileName.newInstance();
+                case "修改小说命名方式":
+                    return FragmentNovelFileName.newInstance();
                 case "捐赠":
                     return FragmentDonate.newInstance();
                 case "关注者的小说":

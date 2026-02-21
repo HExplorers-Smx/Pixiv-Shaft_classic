@@ -173,6 +173,12 @@ public abstract class BaseActivity<Layout extends ViewDataBinding> extends AppCo
             case 9:
                 setTheme(R.style.AppTheme_Index9);
                 break;
+            case 10:
+                setTheme(R.style.AppTheme_Index10);
+                break;
+            case 11:
+                setTheme(R.style.AppTheme_Index11);
+                break;
             default:
                 setTheme(R.style.AppTheme_Default);
                 break;

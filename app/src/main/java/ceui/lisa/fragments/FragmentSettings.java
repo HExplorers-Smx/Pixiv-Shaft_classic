@@ -675,6 +675,16 @@ public class FragmentSettings extends SwipeFragment<FragmentSettingsBinding> {
                 }
             });
 
+            // 自定义小说下载文件名
+            baseBind.novelFileNameRela.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(mContext, TemplateActivity.class);
+                    intent.putExtra(TemplateActivity.EXTRA_FRAGMENT, "修改小说命名方式");
+                    startActivity(intent);
+                }
+            });
+
             //按作者保存到单独文件夹
             baseBind.saveForSeparateAuthor.setText(UserFolderNameUtil.getCurrentStatusName());
             baseBind.saveForSeparateAuthor.setOnClickListener(new View.OnClickListener() {

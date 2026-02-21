@@ -202,7 +202,8 @@ public class IllustDownload {
     }
 
     public static void downloadNovel(BaseActivity<?> activity, NovelSeriesItem novelSeriesItem, String content, Callback<Uri> targetCallback) {
-        String displayName = FileCreator.deleteSpecialWords("NovelSeries_" + novelSeriesItem.getId() + "_Chapter_1~" + novelSeriesItem.getContent_count() + "_" + novelSeriesItem.getTitle() + ".txt");
+        // 系列小说：默认不再带 NovelSeries 前缀；并支持用户自定义命名格式
+        String displayName = FileCreator.customNovelSeriesFileName(novelSeriesItem);
         downloadNovel(activity, displayName, content, targetCallback);
     }
 
@@ -235,13 +236,13 @@ public class IllustDownload {
 
     public static void downloadNovel(BaseActivity<?> activity, NovelBean novelBean, NovelDetail novelDetail, Callback<Uri> targetCallback) {
 
+        // 小说文件名：支持用户自定义命名格式（默认不再带 ID 前缀）
+        String displayName = FileCreator.customNovelFileName(novelBean);
+
         String title = novelBean.getTitle();
         if (novelBean.getSeries()!= null && novelBean.getSeries().getTitle() != null){
-            title=novelBean.getSeries().getTitle()+"_"+title;
+            title = novelBean.getSeries().getTitle() + "_" + title;
         }
-        String newTitle = truncateTitle(title, 58);
-        String displayName = FileCreator.deleteSpecialWords("Novel_" + novelBean.getId() + "_" + newTitle + ".txt");
-
         String content = getNovelText(title, novelBean, novelDetail);
         downloadNovel(activity, displayName, content, targetCallback);
     }

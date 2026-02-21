@@ -2,7 +2,6 @@ package ceui.lisa.view;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.ScrollView;
@@ -43,7 +42,7 @@ public class ContextMenuTitleView extends ScrollView {
         TextView titleView = new TextView(context);
         titleView.setText(title);
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
-        titleView.setTextColor(Color.BLACK);
+        titleView.setTextColor(resolveColorAttr(context, android.R.attr.textColorPrimary));
         addView(titleView);
     }
 
@@ -62,6 +61,15 @@ public class ContextMenuTitleView extends ScrollView {
 
     public static int dpToPx(int dp) {
         return (int) (dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    private static int resolveColorAttr(Context context, int attr) {
+        TypedValue typedValue = new TypedValue();
+        context.getTheme().resolveAttribute(attr, typedValue, true);
+        if (typedValue.resourceId != 0) {
+            return context.getResources().getColor(typedValue.resourceId);
+        }
+        return typedValue.data;
     }
 
     @Override

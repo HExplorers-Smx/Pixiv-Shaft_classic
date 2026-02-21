@@ -163,6 +163,9 @@ public class Settings {
 
     private String fileNameJson = "";
 
+    // 自定义小说下载文件名（与插画自定义命名方式一致，存储为 CustomFileNameCell JSON）
+    private String novelFileNameJson = "";
+
     private String rootPathUri = "";
 
     private int downloadWay = 0; //0传统模式，保存到Pictures目录下。    1 SAF模式保存到自选目录下
@@ -469,6 +472,14 @@ public class Settings {
 
     public void setFileNameJson(String fileNameJson) {
         this.fileNameJson = fileNameJson;
+    }
+
+    public String getNovelFileNameJson() {
+        return novelFileNameJson;
+    }
+
+    public void setNovelFileNameJson(String novelFileNameJson) {
+        this.novelFileNameJson = novelFileNameJson;
     }
 
     public boolean isHasP0() {

@@ -114,6 +114,21 @@ public class Params {
     public static final String MMKV_KEY_ISSHOWTIPS_SEARCHSORT = "tips searchsort";
 
     public static final int REQUEST_CODE_CHOOSE = 10086;
+
+    // 用于“自定义小说下载文件名”的预览示例
+    public static final String EXAMPLE_NOVEL = "{\n" +
+            "  \"id\": 12345678,\n" +
+            "  \"title\": \"小说标题\",\n" +
+            "  \"create_date\": \"2024-01-01T12:00:00+09:00\",\n" +
+            "  \"user\": {\n" +
+            "    \"id\": 87654321,\n" +
+            "    \"name\": \"作者昵称\"\n" +
+            "  },\n" +
+            "  \"series\": {\n" +
+            "    \"id\": 11223344,\n" +
+            "    \"title\": \"系列标题\"\n" +
+            "  }\n" +
+            "}";
     public static final String EXAMPLE_ILLUST = "{\n" +
             "    \"caption\":\"\",\n" +
             "    \"create_date\":\"2020-07-07T00:30:02+09:00\",\n" +

@@ -138,6 +138,9 @@
     <string name="language">语言</string>
     <string name="theme_mode">主题模式</string>
     <string name="custom_file_name">自定义下载文件名</string>
+    <string name="custom_novel_file_name">自定义小说下载文件名</string>
+    <string name="preview_novel_filename">小说预览文件名</string>
+    <string name="preview_novel_series_filename">系列预览文件名</string>
     <string name="illust_detail">作品详情使用新界面</string>
     <string name="user_detail">个人中心使用新界面</string>
     <string name="file_name_type">文件命名格式</string>
@@ -689,6 +692,8 @@
     <string name="color_classicGreen">老实绿</string>
     <string name="color_classicPurple">基佬紫</string>
     <string name="color_peachPink">樱桃粉</string>
+    <string name="color_sereneSilver">静谧银</string>
+    <string name="color_pearlWhite">珍珠白</string>
     <string name="theme_nowUsing">（正在使用）</string>
     <string name="core_string_novel_marker">小说书签</string>
     <string name="toast_download_result">下载完成App内提示</string>

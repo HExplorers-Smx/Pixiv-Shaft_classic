@@ -102,7 +102,20 @@
         <item name="colorPrimaryDark">#C2185B</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    
+
+<style name="AppTheme.Index10" parent="AppTheme">
+    <!-- 静谧银 -->
+    <item name="colorPrimary">#9EA7AD</item>
+    <item name="colorPrimaryDark">#6F787E</item>
+</style>
+
+<style name="AppTheme.Index11" parent="AppTheme">
+    <!-- 珍珠白 -->
+    <item name="colorPrimary">#F2F1ED</item>
+    <item name="colorPrimaryDark">#C8C6C0</item>
+</style>
+<style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

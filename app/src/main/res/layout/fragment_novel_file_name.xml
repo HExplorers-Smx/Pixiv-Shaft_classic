@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar_layout" />
+
+        <com.scwang.smart.refresh.layout.SmartRefreshLayout
+            android:id="@+id/refreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/submit_linear"
+            android:layout_below="@+id/toolbar">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/now_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/sixteen_dp"
+                    android:layout_marginTop="@dimen/sixteen_dp"
+                    android:layout_marginBottom="@dimen/twelve_dp"
+                    android:text="@string/preview_novel_filename"
+                    android:textColor="@color/black_to_white"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/file_name_novel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/now_name"
+                    android:layout_marginStart="@dimen/sixteen_dp"
+                    android:layout_marginEnd="@dimen/sixteen_dp"
+                    android:layout_marginBottom="@dimen/twelve_dp"
+                    android:text=""
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/series_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/file_name_novel"
+                    android:layout_marginStart="@dimen/sixteen_dp"
+                    android:layout_marginBottom="@dimen/twelve_dp"
+                    android:text="@string/preview_novel_series_filename"
+                    android:textColor="@color/black_to_white"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/file_name_series"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/series_name"
+                    android:layout_marginStart="@dimen/sixteen_dp"
+                    android:layout_marginEnd="@dimen/sixteen_dp"
+                    android:layout_marginBottom="@dimen/sixteen_dp"
+                    android:text=""
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="18sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/file_name_series" />
+
+            </RelativeLayout>
+
+        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
+
+        <LinearLayout
+            android:id="@+id/submit_linear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                    android:id="@+id/reset"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="@dimen/twenty_four_dp"
+                    android:layout_marginTop="@dimen/eight_dp"
+                    android:layout_marginEnd="@dimen/six_dp"
+                    android:layout_marginBottom="@dimen/eight_dp"
+                    android:layout_weight="1"
+                    android:text="@string/string_449"
+                    android:textColor="@color/black_to_white"
+                    app:qmui_backgroundColor="@color/white_and_black"
+                    app:qmui_borderColor="#eaebf9"
+                    app:qmui_radius="@dimen/eight_dp" />
+
+                <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                    android:id="@+id/show_now"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="@dimen/six_dp"
+                    android:layout_marginTop="@dimen/eight_dp"
+                    android:layout_marginEnd="@dimen/six_dp"
+                    android:layout_marginBottom="@dimen/eight_dp"
+                    android:layout_weight="1"
+                    android:text="@string/string_59"
+                    android:textColor="#9f9fb4"
+                    android:visibility="gone"
+                    app:qmui_backgroundColor="@color/white_and_black"
+                    app:qmui_borderColor="#eaebf9"
+                    app:qmui_radius="@dimen/eight_dp" />
+
+                <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+                    android:id="@+id/save_now"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_marginStart="@dimen/six_dp"
+                    android:layout_marginTop="@dimen/eight_dp"
+                    android:layout_marginEnd="@dimen/twenty_four_dp"
+                    android:layout_marginBottom="@dimen/eight_dp"
+                    android:layout_weight="2"
+                    android:text="@string/string_60"
+                    android:textColor="@color/white"
+                    app:qmui_backgroundColor="?attr/colorPrimary"
+                    app:qmui_borderColor="#eaebf9"
+                    app:qmui_borderWidth="0dp"
+                    app:qmui_radius="@dimen/eight_dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</layout>
